@@ -216,6 +216,7 @@
 
     - ```javascript
       // Change an element style
+      // Not recommand, not OO. Instead, we could name a class, then add style, then use JS to add this class to the targets.
       var tag = document.getElementsByTagName();
       
       tag.style.color = "blue";
@@ -223,12 +224,46 @@
       tag.style.fontSize = "70px";
       tag.style.background = "yellow";
       tag.style.marginTop = "200px";
+      
+      
       // adding/removing classes
+      var tag = document.getElementById("highlight");
+      tag.classList.add("some-class");
+      tag.classList.remove("another-class");
+      
+      // If has this class, remove it; else turn it on.
+      tag.classList.toggle("another-class");
       
       // changing the content of a tag
+      // <p> This is an <strong>awesome</strong> paragraph</p>
+      var tag = document.querySelector("p");
+      // erase all tag inside <p>
+      tag.textContent = "balabla";
+      
+      tag.innerHTML; // This is an <strong>awesome</strong> paragraph
       
       // changing attributes(src, href, etc.)
+      // <a href = "www.google.com">I am a link</a>
+      // <img src = "logo.png">
+      var link = document.querySelector("a");
+      link.getAttribute("href"); //"www.google.com"
+      link.setAttribute("href", "www.dogs.com"); 
+      // <a href="www.dogs.com">I am a link</a>
       ```
+
+    - ```javascript
+      // The event
+      // Select an element, and then add an event listener
+      var button = document.querySelector("button");
+      
+      // addEventListener([type], [function])
+      // Event types: https://developer.mozilla.org/en-US/docs/Web/Events
+      button.addEventListener("click", function(){
+          console.log("Some one clicked the button");
+      });
+      ```
+
+      
 
 - JS:如何获得随机的颜色？
 
@@ -243,4 +278,101 @@
       }
     ```
 
+- JS: 如何循环一个NodeList
+
+  - ```javascript
+    不能用forEach， 只能用classical for loop； lists.length;
+    ```
+
+- HTML: 如果想要一个input，然后可以上下点数字加减1的怎么做？
+
+  - ```html
+    <input type="number">
+    ```
+
+- HTML: 想贴合页面怎么办？
+
+  - body里面设置margin 0;
+
+- HTML: 想要一个element消失怎么办？
+
+  - 用display property, `style.display = 'none'`, 想要回来的时候把none改成block
+
+- HTML: button不想要边框怎么办？
+
+  - Border: none
+
+- jQuery: 如何一次性apply多个style？
+
+  - ```javascript
+    var style = {
+        background : blue,
+        color : white,
+        // css里面是font-size， 但是jQuery是fontSize
+        fontSize : "10px"
+    };
+    $("selector").css(style);
+    ```
+
+- HTML/CSS: 如何去除list/ul/li的点/dot/bullet point？
+
+  - ```css
+    ul {
+        list-style-type : none;
+    }
+    ```
+
+- jQuery: 如何触发子元素的事件而不触发母元素的事件？
+
+  - ```javascript
+    $("span").click(function(event){
+        alert('click on a span');
+        // 加下面这句话
+        event.stopPropagation();
+    });
+    ```
+
+- jQuery: 如何给future的element添加listener？
+
+  - ```javascript
+    // Delegated event handlers
+    // Check off specific todos by clicking
+    $('ul').on("click", "li", function () {
+        $(this).toggleClass('completed');
+    });
+    ```
+
+- CSS: 想要隔几个元素不同的背景怎么做？
+
+  - ```css
+    li {
+        background: white;
+    }
     
+    li:nth-child(2n){
+        background: #f7f7f7;
+    }
+    ```
+
+- CSS: input的width超过了parent的width怎么处理？
+
+  - box-sizing: border-box;
+  - <https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing>
+
+- CSS: 渐变色背景怎么设置？
+
+  - <https://uigradients.com/#Twitch>
+
+- CSS: move an element to the right; 把一个元素移到右边
+
+  - `float: right;`
+
+- CSS: 一个元素width为0的时候依然可以看见里面的东西要怎么处理？
+
+  - `opacity: 0;`
+
+- JS/CSS: fontawesome导致不一样的行为要怎么处理？
+
+  - 首先fontawesome的版本要是5
+  - 用span把i包围起来，同时给i一个id
+  - CSS处理的时候要选择li span， js处理的时候要选择这个id
