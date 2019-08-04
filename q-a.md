@@ -21,7 +21,7 @@
 
 - 如何固定nav bar?
 
-  - Bootstrap下，在nav的tag里面添加class="navbar-fixed-top"
+  - Bootstrap 3.x下，在nav的tag里面添加class="navbar-fixed-top"
 
 - 如果网页背景过大，要怎么处理？
 
@@ -195,6 +195,8 @@
 - JS: 去哪找方法？
 
   - <https://underscorejs.org/>
+  - <http://paperjs.org/> graph and animation
+  - <https://howlerjs.com/> audio
 
 - JS: DOM:
 
@@ -376,3 +378,153 @@
   - 首先fontawesome的版本要是5
   - 用span把i包围起来，同时给i一个id
   - CSS处理的时候要选择li span， js处理的时候要选择这个id
+
+- Not found:
+
+  - ```shell
+    export PATH=/usr/local/bin:$PATH
+    ```
+
+- No default engine was specified and no extension was provided
+
+  - `app.set('view engine', 'ejs');`
+
+- Ubuntu: Kill a process on a port
+
+  - <https://stackoverflow.com/questions/9346211/how-to-kill-a-process-on-a-port-on-ubuntu>
+
+  - ```
+    sudo kill `sudo lsof -t -i:9001`
+    ```
+
+- RESTful routes
+
+  - | name    | url            | verb   | desc                                             |
+    | ------- | -------------- | ------ | ------------------------------------------------ |
+    | INDEX   | /dogs          | GET    | display a list of all dog                        |
+    | NEW     | /dogs/new      | GET    | Display form to make a new dog                   |
+    | CREATE  | /dogs          | POST   | Add new dog to DB                                |
+    | SHOW    | /dogs/:id      | GET    | Show info about one dog                          |
+    | Edit    | /dogs/:id/edit | GET    | Show edit form for one dog                       |
+    | Update  | /dogs/:id      | PUT    | Update a particular dog, then redirect somewhere |
+    | Destory | /dogs/:id      | DELETE | Delete a particular dog, then redirect somewhere |
+
+    REST - a mapping between HTTP routes and CRUD
+
+    - CRUD: Create, Read, Update, Destroy
+
+- Refused to apply style "because its MIME type ('text/html') is not a supported stylesheet MIME type"
+
+  - <link rel="stylesheet" href="stylesheets/main.css">
+  - 改成
+  - <link rel="stylesheet" href="/stylesheets/main.css">
+
+- 如何在a tag里面发起post request？
+
+  - ```html
+    <form action="theUrl" method="POST">
+        <input type="hidden" name="param1" value="val" />
+        <input type="hidden" name="param2" value="val2" />
+        <a href="#" onclick="this.parentNode.submit()">Go to that link!</a>
+    </form>
+    ```
+
+- 前端： 获取用户的输入
+
+  - ```javascript
+    onInputChange(event) {
+            console.log(event.target.value);
+        }
+    ```
+
+
+
+
+
+
+# React
+
+
+
+# Redux
+
+- Error: Actions must be plain objects. Use custom middleware for async actions. 
+
+  - context
+
+    - ```javascript
+      import jsonPlaceholder from '../apis/jsonPlaceholder';
+      
+      export const fetchPosts = async () => {
+          // Bad approach
+          const response = await jsonPlaceholder.get('/posts');
+          return {
+              type: 'FETCH_POSTS',
+              payload: response
+          };
+      };
+      ```
+
+  - Problems:
+
+    - Action creator must return plain JS objects with a type property
+
+      - ```javascript
+        return {
+                type: 'FETCH_POSTS',
+                payload: response
+            };
+        ```
+
+        The actual code executed in browser is ES2015, what we are writing is ES2015+. Even though it looks like a plain JS objects, it isn't.
+
+        It is because of the async syntax.
+
+        ```javascript
+        var response;
+            return regeneratorRuntime.wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    _context.next = 2;
+                        // The first time it meets is not an valid action
+                    return _jsonPlaceholder.default.get('/posts');
+        
+                  case 2:
+                    response = _context.sent;
+                    return _context.abrupt("return", {
+                      type: 'FETCH_POSTS',
+                      payload: response
+                    });
+        
+                  case 4:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee);
+        ```
+
+        
+
+    - By the time our action gets to a reducer, we won't have fetched data.
+
+  - Solution:
+
+    - need middleware, use redux-thunk
+
+    - ```javascript
+      export const fetchPosts = () => {
+          // Redux-thunk calls it with these two params
+          // We need to manually dispatch the action
+          return async function(dispatch, getState) {
+              const response = await jsonPlaceholder.get('/posts');
+              dispatch({type: 'FETCH_POSTS', payload: response});
+          };
+      };
+      ```
+
+- Redux刷新state之后没有刷新页面？
+
+  - 也许是因为reducer返回了mutation的state，以至于redux觉得没有更新，所以没有刷新页面
+  - ![](/Users/dengxing/Desktop/ScreenShot/Screen Shot 2019-08-04 at 15.53.40.png)
